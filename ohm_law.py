@@ -3,14 +3,14 @@
 
 #WARNNING , THIS FILE IS A CODING PRACTICE 
 
-#App Name : Ohm Law Calc (OLC)
-#App Version : 0.1
-#Created : 14/07/2019
-#Author : Khaled_Fathi [ Khaledfathi@protonmail.com ]
-#Code : Python3 
-#Git Repository : None 
+#App Name ------: Ohm Law Calc (OLC)
+#App Version ---: 0.2
+#Created -------: 14/07/2019
+#Last Change ---: 18/07/2019
+#Author --------: Khaled_Fathi [ Khaledfathi@protonmail.com ]
+#Code ----------: Python3 
+#Git Repository : https://github.com/khaledfathi/OLC
 
-#lib/framework
 import sys
 import os 
 from math import sqrt
@@ -69,7 +69,7 @@ class APP (QMainWindow) :
         self.res = QLabel("Res = ------ " ,self)
         self.res.setFont(QFont("Time", 14))
         self.res.setStyleSheet("color:red;")
-        self.res.setGeometry(10,165,500,100)
+        self.res.setGeometry(10,190,500,100)
         
     def selection (self):
         "selection section"
@@ -89,24 +89,28 @@ class APP (QMainWindow) :
         self.get_resistance.setMaximumWidth(200)
         self.get_resistance.setHidden(True)
         self.get_resistance.currentIndexChanged.connect(self.select_sub_option)
+        self.get_resistance.currentIndexChanged.connect(self.clear_by_sub_options)
         
         self.get_voltage = QComboBox ()
         self.get_voltage.addItems(["Resistance and Current","Resistance and Power","Current and Power"])
         self.get_voltage.setMaximumWidth(200)
         self.get_voltage.setHidden(True)
         self.get_voltage.currentIndexChanged.connect(self.select_sub_option)
+        self.get_voltage.currentIndexChanged.connect(self.clear_by_sub_options)
         
         self.get_current = QComboBox ()
         self.get_current.addItems(["Voltage and Resistance","Vlotage and Power","Resistance and Power"])
         self.get_current.setMaximumWidth(200)
         self.get_current.setHidden(True)
         self.get_current.currentIndexChanged.connect(self.select_sub_option)
+        self.get_current.currentIndexChanged.connect(self.clear_by_sub_options)
         
         self.get_power = QComboBox ()
         self.get_power.addItems(["Voltage and Current","Voltage and Resistance","Current and Resistance"])
         self.get_power.setMaximumWidth(200)
         self.get_power.setHidden(True)
         self.get_power.currentIndexChanged.connect(self.select_sub_option)
+        self.get_power.currentTextChanged.connect(self.clear_by_sub_options)
         
         #units 
         self.unit_normal = QRadioButton ("Normal")
@@ -128,7 +132,7 @@ class APP (QMainWindow) :
         main_select.addWidget (self.current)
         main_select.addWidget (self.power)
         
-        main_selections = QGroupBox (self)
+        main_selections = QGroupBox ("Select Lost Value" ,self)
         main_selections.setGeometry (300,5,350,100)
         main_selections.setLayout (main_select)
         
@@ -139,8 +143,8 @@ class APP (QMainWindow) :
         options.addWidget (self.get_power)
         
         
-        all_options = QGroupBox(self)
-        all_options.setGeometry(300,85,350,100)
+        all_options = QGroupBox("Get by", self)
+        all_options.setGeometry(300,110,350,100)
         all_options.setLayout(options)
         
         units = QVBoxLayout ()
@@ -150,8 +154,8 @@ class APP (QMainWindow) :
         units.addWidget (self.unit_giga)
         units.addWidget (self.unit_tera)
         
-        all_units = QGroupBox(self)
-        all_units.setGeometry(650,5,100,180)
+        all_units = QGroupBox("Result unit",self)
+        all_units.setGeometry(660,5,100,205)
         all_units.setLayout(units)
                 
     def buttons (self):
@@ -159,6 +163,11 @@ class APP (QMainWindow) :
         self.calc.move(70,110)
         self.calc.setDisabled(True)
         self.calc.clicked.connect(self.run_calc)
+        
+        self.clear = QPushButton("Clear" , self)
+        self.clear.move(70,150)
+        self.clear.setDisabled(True)
+        self.clear.clicked.connect(self.clear_input)
         
         about = QPushButton ("About",self)
         about.move(530,250)
@@ -177,6 +186,7 @@ class APP (QMainWindow) :
         self.value1.setDisabled(False)
         self.value2.setDisabled(False)
         self.calc.setDisabled(False)
+        self.clear.setDisabled(False)
     
     def unhide (self , resistance=True , voltage=True , current=True, power=True):
         "exchange hide and unhide option for each selection , [ used by another function ]"
@@ -197,6 +207,7 @@ class APP (QMainWindow) :
             return self.power.text()
 
     def clear_input(self):
+        self.res.setText("Res = ------ ")
         self.value1.clear()
         self.value2.clear()
     
@@ -211,6 +222,7 @@ class APP (QMainWindow) :
             return "giga"
         elif self.unit_tera.isChecked():
             return "tera"
+    
             
     #******************
     # SLOTS FUNCTIONS *
@@ -220,7 +232,6 @@ class APP (QMainWindow) :
         to perparing the calculations"
         self.enable_all()
         self.clear_input()
-        self.res.setText("Res = ------ ")
         if self.resistance.isChecked() :
             self.unhide(resistance=False)
         elif self.voltage.isChecked():
@@ -280,6 +291,11 @@ class APP (QMainWindow) :
             status = {"type":"power", "option":self.get_power.currentIndex()}
         return status
     
+    def clear_by_sub_options (self):
+        self.value1.clear()
+        self.value2.clear()
+        self.res.setText("Res = ------ ")
+    
     def change_unit(self):
         self.run_calc()
         
@@ -289,7 +305,7 @@ class APP (QMainWindow) :
     
     def about_app (self):
         "application description"
-        QMessageBox().about(self,"About Application" , "OLC [Ohm Law Calc]\n\n\
+        QMessageBox().about(self,"About Application" , "OLC [Ohm Law Calc] Version 0.2 \n\n\
         Simple Application to calculate the whole Ohm law \n\n\
         [ Resistance | Voltage | Current | Power ]\n\n\
         Khaledfathi@protonmail.com")
@@ -317,15 +333,15 @@ class APP (QMainWindow) :
             self.final= ohm(type_ , option , v1 , v2 ).calc_res() #return (result , 4th result , name of 4th result)
             unit = self.unit_value()
             if unit == "normal":
-                result_text = self.type_checked() + " = " + str(round(self.final[0], 8)) + "\n" + str(self.final[2]) + " = " +  str(round(self.final[1], 8))
+                result_text = self.type_checked() + " = " + str(round(self.final[0], 10)) + self.final[3]+ "\n" + str(self.final[2]) + " = " +  str(round(self.final[1], 8)) + self.final[4]
             elif unit == "kilo" :
-                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000, 8)) + " Kilo\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000, 8)) + " Kilo"
+                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000, 10)) + " Kilo" + self.final[3] + "\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000, 8)) + " Kilo" + self.final[4]
             elif unit == "mega" :
-                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000000, 8)) + " Mega\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000000, 8)) + " Mega"
+                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000000, 10)) + " Mega" + self.final[3] + "\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000000, 8)) + " Mega" + self.final[4]
             elif unit == "giga" :
-                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000000000, 8)) + " Giga\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000000000, 8)) + " Giga"
+                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000000000, 10)) + " Giga" + self.final[3] + "\n" +str(self.final[2]) + " = " +  str(round(self.final[1]/1000000000, 8)) + " Giga" + self.final[4]
             elif unit == "tera" :
-                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000000000000, 8)) + " Tera\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000000000000, 8)) + " Tera"
+                result_text = self.type_checked() + " = " + str(round(self.final[0]/1000000000000, 10)) +  " Tera" + self.final[3] + "\n" + str(self.final[2]) + " = " +  str(round(self.final[1]/1000000000000, 8)) + " Tera" + self.final[4]
             with open ("result.txt", "a") as f :
                 f.write("\n--------\n\n" + str(datetime.now()) + "\n" + self.lb1.text() + " = " + self.value1.text() + "\n" + self.lb2.text() + " = " + self.value2.text() + "\n" + result_text)
             self.res.setText(result_text)
@@ -390,32 +406,32 @@ class ohm :
     def calc_res (self) :
         "return list for [result calculation , find and calculate lost value , text for lost type]"
         if self.type_ == "resistance" and self.option == 0:
-            return self.resistance_vi(self.v1,self.v2), self.power_vi(self.v1,self.v2) , "Power"
+            return self.resistance_vi(self.v1,self.v2), self.power_vi(self.v1,self.v2) , "Power" , " Ohm" , " Watt"
         elif self.type_ == "resistance" and self.option == 1:
-            return self.resistance_vp (self.v1,self.v2), self.current_vp(self.v1,self.v2) , "Current"
+            return self.resistance_vp (self.v1,self.v2), self.current_vp(self.v1,self.v2) , "Current" , " Ohm" , " Amp"
         elif self.type_ == "resistance" and self.option == 2:
-            return self.resistance_ip(self.v1,self.v2) , self.voltage_ip(self.v1,self.v2) , "Voltage"
+            return self.resistance_ip(self.v1,self.v2) , self.voltage_ip(self.v1,self.v2) , "Voltage" , " Ohm" ," Volt"
         
         elif self.type_ == "voltage" and self.option == 0:
-            return self.voltage_ri(self.v1,self.v2) , self.power_ir(self.v1,self.v2) , "Power"
+            return self.voltage_ri(self.v1,self.v2) , self.power_ir(self.v1,self.v2) , "Power" , " Volt" , " Watt"
         elif self.type_ == "voltage" and self.option == 1:
-            return self.voltage_rp(self.v1,self.v2) , self.current_rp (self.v1,self.v2) , "Current"
+            return self.voltage_rp(self.v1,self.v2) , self.current_rp (self.v1,self.v2) , "Current" , " Volt" , " Amp"
         elif self.type_ == "voltage" and self.option == 2:
-            return self.voltage_ip(self.v1,self.v2) , self.resistance_ip(self.v1,self.v2), "Resistance"
+            return self.voltage_ip(self.v1,self.v2) , self.resistance_ip(self.v1,self.v2), "Resistance" ," Volt" , " Ohm"
         
         elif self.type_ == "current" and self.option == 0:
-            return self.current_vr(self.v1,self.v2) , self.power_vr(self.v1,self.v2), "Power"
+            return self.current_vr(self.v1,self.v2) , self.power_vr(self.v1,self.v2), "Power" , " Amp" ," Watt"
         elif self.type_ == "current" and self.option == 1:
-            return self.current_vp(self.v1,self.v2) , self.resistance_vp(self.v1,self.v2), "Resistance"
+            return self.current_vp(self.v1,self.v2) , self.resistance_vp(self.v1,self.v2), "Resistance" , " Amp" , " Ohm"
         elif self.type_ == "current" and self.option == 2:
-            return self.current_rp(self.v1,self.v2) , self.voltage_rp (self.v1,self.v2) , "Voltage"
+            return self.current_rp(self.v1,self.v2) , self.voltage_rp (self.v1,self.v2) , "Voltage" , " Amp"," Volt"
         
         elif self.type_ == "power" and self.option == 0:
-            return self.power_vi(self.v1,self.v2) , self.resistance_vi (self.v1,self.v2) , "Resistance"
+            return self.power_vi(self.v1,self.v2) , self.resistance_vi (self.v1,self.v2) , "Resistance" , "Watt" , " Ohm"
         elif self.type_ == "power" and self.option == 1:
-            return self.power_vr(self.v1,self.v2) , self.current_vr (self.v1,self.v2) , "Current"
+            return self.power_vr(self.v1,self.v2) , self.current_vr (self.v1,self.v2) , "Current" , " Watt" , " Amp"
         elif self.type_ == "power" and self.option == 2:
-            return self.power_ir(self.v1,self.v2) , self.voltage_ri(self.v1,self.v2), "Voltage"
+            return self.power_ir(self.v1,self.v2) , self.voltage_ri(self.v1,self.v2), "Voltage" , " Watt" , " Volt"
         
 #run from this file             
 if __name__ == "__main__":
