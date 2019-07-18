@@ -5,4 +5,4 @@
 #### This Application was created as a coding practice
 Code :
 * Python 3.6
-* PyQt 5
+* GUI by PyQt 5 
